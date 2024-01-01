@@ -7,3 +7,5 @@ TUNA的基本结构分为三端，agent端，server端和client端。agent端为
 TUNA除了基础功能以外，还有一定的自研自由度。TUNA将开放一些接口，交由用户实现，可以轻松将TUNA框架集成到自己的项目中。
 
 ![image-20210116150931351](./doc/image/arch.png)
+
+以Rust为主要设计
