@@ -1,11 +1,27 @@
-# TUNA 
 
-TUNA工程是一套完整的模拟信号数据采集软件框架。作为软件框架，她可以架设到多种平台设备上来实现模拟信号的数据采集。TUNA可集成到自研科研试验设备的**软核**，实现端到端数据转存、记录与提取功能。
+TUNA is a comprehensive software framework for analog signal data acquisition. As a software framework, it can be deployed on various platform devices to achieve data acquisition of analog signals. TUNA can be integrated into the soft core of self-developed scientific research experimental equipment, realizing end-to-end data transfer, recording, and extraction functions.
 
-TUNA的基本结构分为三端，agent端，server端和client端。agent端为数据的终端设备，通常是一片集成了操作系统（linux/rtos）的arm核处理器低功耗设备，有离线保存数据、实施采集数据等基础功能；server端是运行在操作系统桌面后台的服务程序，监听agent状态，读取agent的数据，用户无需操心传输协议层面的问题；client端具备多种形式，可以是TUNA包含的界面程序，亦可以是常用科研软件如MATLAB、Python，支持将数据一键导入MATLAB/Python变量的功能。
+The basic architecture of TUNA is divided into three parts: the agent, server, and client. The agent is the terminal device for data, typically a low-power device with an ARM processor integrated with an operating system (Linux/RTOS), equipped with basic functionalities like offline data saving and active data collection. The server runs as a background service on the operating system's desktop, monitoring the agent's status and reading its data, freeing users from worrying about the transport protocol layer. The client side comes in various forms, including the interface program included in TUNA or commonly used scientific software like MATLAB or Python, supporting one-click data import into MATLAB/Python variables.
 
-TUNA除了基础功能以外，还有一定的自研自由度。TUNA将开放一些接口，交由用户实现，可以轻松将TUNA框架集成到自己的项目中。
+Besides its fundamental capabilities, TUNA also offers a certain degree of customization. TUNA will open some interfaces for users to implement, allowing easy integration of the TUNA framework into their own projects.
 
-![image-20210116150931351](./doc/image/arch.png)
+# 1. Software Arch
 
-以Rust为主要设计
+The software Arch figure is shown in the following figure:
+
+<div align='center'><img src="https://raw.githubusercontent.com/carloscn/images/main/typora202401021634817.png" width="70%" /></div> 
+
+## 1.1 Host Side Arch
+
+<div align='center'><img src="https://raw.githubusercontent.com/carloscn/images/main/typora202401031509291.png" width="70%" /></div> 
+
+## 1.2 Device Side Arch
+
+
+
+
+# 2. Use cases
+
+There are some Tuna use cases for your reference. 
+
+## 2.1 ADC Data Gatheration
