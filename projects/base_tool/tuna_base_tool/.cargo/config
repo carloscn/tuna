@@ -1,0 +1,2 @@
+[alias]
+run-base = "run -- --server 127.0.0.1 --path ${HOME}/adc/data --fft-enable"

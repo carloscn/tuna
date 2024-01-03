@@ -1,5 +1,6 @@
 use clap::{Parser, parser};
-use std::string::String;
+mod network;
+use network::NetOperator;
 
 // tuna_base_tool --server "10.10.127.59" --port 11225 --path "${HOME}/adc/data" --fft-enable
 
@@ -49,5 +50,8 @@ fn main() {
     println!("Hello {}", args.path);
     println!("Hello {}", args.fft_enable);
 
+    let mut net_operator:NetOperator = NetOperator::new(&args.server, args.port, 1);
+
+    net_operator.free();
 }
 
