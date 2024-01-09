@@ -1,6 +1,8 @@
 use clap::{Parser, parser};
 mod network;
+mod storage;
 use network::NetOperator;
+use storage::StorageManager;
 
 // tuna_base_tool --server "10.10.127.59" --port 11225 --path "${HOME}/adc/data" --fft-enable
 
