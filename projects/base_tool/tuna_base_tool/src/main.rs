@@ -52,8 +52,41 @@ fn main() {
     println!("Hello {}", args.path);
     println!("Hello {}", args.fft_enable);
 
-    let mut net_operator:NetOperator = NetOperator::new(&args.server, args.port, 1);
+    //let mut net_operator:NetOperator = NetOperator::new(&args.server, args.port, 1);
 
-    net_operator.free();
+}
+
+#[cfg(test)]
+mod test_storage_manager {
+    use std::io::{Error as IOError, ErrorKind};
+
+    use super::*;
+
+    #[test]
+    fn test_is_dir() {
+        let mut np:StorageManager = StorageManager::new(10000);
+        let ret = np.is_dir_exist("/home/haochenwei").unwrap();
+        assert_eq!(ret, true);
+
+        let ret = np.is_dir_exist("/home/xxx").unwrap();
+        assert_eq!(ret, false);
+
+        let ret = np.is_dir_exist("");
+        match ret {
+            Ok(_) => panic!("Test failed!"),
+            Err(e) => {
+                match e.kind() {
+                    ErrorKind::InvalidInput => {
+                        assert!(true);
+                    }
+                    _ => panic!("test failed!"),
+                }
+            },
+         }
+
+        let ret = np.is_dir_exist("dd").unwrap();
+        assert_eq!(ret, false);
+    }
+
 }
 

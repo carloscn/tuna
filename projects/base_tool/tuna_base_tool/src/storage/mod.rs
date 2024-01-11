@@ -1,28 +1,27 @@
 use std::io::{Error, Read, Write, self, ErrorKind};
 use std::fs::{OpenOptions, read, remove_file, File};
-use std::{time, rc};
 use std::path::Path;
-
-use clap::error::ErrorKind;
 
 pub struct StorageManager {
     pub storage_size: usize,
-    pub storage_size_current: usize,
+    storage_size_current: usize,
     dir_flag: bool,
     file_dir: String,
 }
 
 impl StorageManager {
-    pub fn new() -> StorageManager {
+    pub fn new(max_size:usize) -> StorageManager {
         let op = StorageManager {
             storage_size: 0,
-            storage_size_current: 0
+            storage_size_current: max_size,
+            dir_flag: true,
+            file_dir: "/home".to_string(),
         };
 
         return op;
     }
 
-    pub fn write(file_name:&str, buf: &Vec<u8>) -> Result<usize, Error> {
+    pub fn write(&self, file_name:&str, buf: &Vec<u8>) -> Result<usize, Error> {
         let mut ret:usize = 0;
         let mut rc = Ok(ret);
 
@@ -66,7 +65,7 @@ impl StorageManager {
         return rc;
     }
 
-    pub fn is_dir_exist(dir_name:&str) -> Result<bool, Error> {
+    pub fn is_dir_exist(&self, dir_name:&str) -> Result<bool, Error> {
         let mut ret:bool = true;
         let mut rc = Ok(ret);
 
@@ -81,7 +80,7 @@ impl StorageManager {
         return Ok(ret);
     }
 
-    pub fn is_file_exist(file_name:&str) -> Result<bool, Error> {
+    pub fn is_file_exist(&self, file_name:&str) -> Result<bool, Error> {
         let mut ret:bool = true;
         let mut rc = Ok(ret);
 
@@ -99,7 +98,7 @@ impl StorageManager {
         return rc;
     }
 
-    pub fn is_file_full(self, file_name:&str) -> Result<bool, Error> {
+    pub fn is_file_full(&self, file_name:&str) -> Result<bool, Error> {
         let mut ret:bool = false;
         let mut rc = Ok(ret);
 
@@ -120,5 +119,13 @@ impl StorageManager {
         rc = Ok(file_sz > (self.storage_size_current as u64));
 
         return rc;
+    }
+
+    pub fn set_storage_size(&mut self, current_size:usize) {
+        self.storage_size_current = current_size;
+    }
+
+    pub fn get_storage_size(&self) -> usize {
+        return self.storage_size_current;
     }
 }
