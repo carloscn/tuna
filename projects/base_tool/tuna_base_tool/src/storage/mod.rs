@@ -95,7 +95,7 @@ impl StorageManager {
                         .map(|metadata| metadata.is_file())
                         .unwrap_or(false);
 
-        return rc;
+        return Ok(ret);
     }
 
     pub fn is_file_full(&self, file_name:&str) -> Result<bool, Error> {
@@ -116,7 +116,7 @@ impl StorageManager {
             },
         };
 
-        rc = Ok(file_sz > (self.storage_size_current as u64));
+        rc = Ok(file_sz >= (self.storage_size_current as u64));
 
         return rc;
     }
@@ -128,4 +128,136 @@ impl StorageManager {
     pub fn get_storage_size(&self) -> usize {
         return self.storage_size_current;
     }
+}
+
+#[cfg(test)]
+mod test_storage_manager {
+    use std::io::{Error as IOError, ErrorKind};
+    use std::env;
+    use std::fs::remove_file;
+    use std::ops::Add;
+
+    use super::*;
+
+    fn f_test_create_zeros_file(file_name: &str, file_size_bytes: usize) -> Result<usize, Error> {
+        let mut ret:usize = file_size_bytes;
+        let mut rc = Ok(ret);
+
+        let mut f:File =  File::create(file_name)?;
+
+        let buffer = vec![0; file_size_bytes];
+        rc = match f.write_all(&buffer) {
+            Ok(_) => Ok(file_size_bytes),
+            Err(error) => {
+                println!("write failed! {:?}", error);
+                return Err(error);
+            },
+        };
+
+        return rc;
+    }
+
+    fn f_test_delete_file(file_name:&str) -> Result<(), Error> {
+        match remove_file(file_name) {
+            Ok(_) => {
+                return Ok(());
+            },
+            Err(error) => {
+                println!("delete file failed! {:?}", error);
+                return Err(error);
+            }
+        };
+    }
+
+    #[test]
+    fn test_is_dir() {
+        let mut np:StorageManager = StorageManager::new(10000);
+        let ret = np.is_dir_exist("/home/haochenwei").unwrap();
+        assert_eq!(ret, true);
+
+        let ret = np.is_dir_exist("/home/xxx").unwrap();
+        assert_eq!(ret, false);
+
+        let ret = np.is_dir_exist("");
+        match ret {
+            Ok(_) => panic!("Test failed!"),
+            Err(e) => {
+                match e.kind() {
+                    ErrorKind::InvalidInput => {
+                        assert!(true);
+                    }
+                    _ => panic!("test failed!"),
+                }
+            },
+         }
+
+        let ret = np.is_dir_exist("dd").unwrap();
+        assert_eq!(ret, false);
+    }
+
+    #[test]
+    fn test_is_file() {
+        let mut np:StorageManager = StorageManager::new(10000);
+        let ret = np.is_file_exist("/home/haochenwei/ddr_init.o").unwrap();
+        assert_eq!(ret, true);
+
+        let ret = np.is_file_exist("/home/haochenwei/hel.o").unwrap();
+        assert_eq!(ret, false);
+
+        let ret = np.is_file_exist("");
+        match ret {
+            Ok(_) => panic!("Test failed!"),
+            Err(e) => {
+                match e.kind() {
+                    ErrorKind::InvalidInput => {
+                        assert!(true);
+                    }
+                    _ => panic!("test failed!"),
+                }
+            },
+         }
+
+        let ret = np.is_dir_exist("dd").unwrap();
+        assert_eq!(ret, false);
+    }
+
+    #[test]
+    fn test_is_file_full() {
+
+        let max_size:usize = 1225;
+
+        // get home path
+        let mut file_path:String = match env::var("HOME") {
+            Ok(value) => {
+                value.clone()
+            }
+            Err(e) => {
+                println!("Couldn't read HOME ({})", e);
+                panic!("test failed!");
+            }
+        };
+
+        file_path = file_path + "/temp_556677.o";
+
+        // create file
+        f_test_create_zeros_file(&file_path, max_size).unwrap();
+
+        // test is file full
+        let mut np:StorageManager = StorageManager::new(max_size);
+
+        let mut ret = np.is_file_full(&file_path).unwrap();
+        assert_eq!(ret, true);
+
+        np.set_storage_size(max_size + 1);
+        ret = np.is_file_full(&file_path).unwrap();
+        assert_eq!(ret, false);
+
+        np.set_storage_size(max_size - 1);
+        ret = np.is_file_full(&file_path).unwrap();
+        assert_eq!(ret, true);
+
+        let _ = f_test_delete_file(&file_path);
+    }
+
+
 }
